@@ -2,8 +2,27 @@
 import requests
 from math import radians, cos, sin, asin, sqrt
 EARTH_RADII = 6371 # 地球平均半径，单位为公里
-def geocode(address):
-    parameters = {'address': address, 'key': 'cb649a25c1f81c1451adbeca73623251'}
+
+from geopy.geocoders import Nominatim
+
+#使用geopy查询
+def geocodeN(address):
+    geolocator = Nominatim(user_agent="specify_your_app_name_here")
+    location = geolocator.geocode("175 5th Avenue NYC")
+    # gps=Nominatim()
+    # location=gps.geocode(address)
+    return location.longitude,location.latitude
+
+def geocodeG(address):
+    """
+    调取高德地图API获取地点的经纬度。
+    para:
+        address: 地址
+    return :
+        lon: 经度
+        lat: 纬度
+    """
+    parameters = {'address': address, 'key': '1fb94e417c808e6231e0c6d8f16204f3'}
     base = 'http://restapi.amap.com/v3/geocode/geo'
     response = requests.get(base, parameters)
     answer = response.json()
@@ -14,8 +33,8 @@ def geocode(address):
 
 
 def getdistqance(address1, address2):
-    lon1,lat1 = geocode(address1)
-    lon2,lat2 = geocode(address2)
+    lon1,lat1 = geocodeG(address1)
+    lon2,lat2 = geocodeG(address2)
     # 将十进制度数转化为弧度
     lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
     # haversine公式
